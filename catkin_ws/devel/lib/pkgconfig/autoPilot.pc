@@ -1,0 +1,8 @@
+prefix=/home/lizhiquan/catkin_ws/devel
+
+Name: autoPilot
+Description: Description of autoPilot
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/lizhiquan/catkin_ws/devel/lib 
+Requires: 
