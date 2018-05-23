@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/lizhiquan/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/elvis/Documents/autoPilot/catkin_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/lizhiquan/catkin_ws/build
+CMAKE_BINARY_DIR = /home/elvis/Documents/autoPilot/catkin_ws/build
 
 # Utility rule file for dynamic_reconfigure_generate_messages_cpp.
 
@@ -63,10 +63,10 @@ autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/build: dynami
 .PHONY : autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/build
 
 autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/clean:
-	cd /home/lizhiquan/catkin_ws/build/autoPilot && $(CMAKE_COMMAND) -P CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/cmake_clean.cmake
+	cd /home/elvis/Documents/autoPilot/catkin_ws/build/autoPilot && $(CMAKE_COMMAND) -P CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/cmake_clean.cmake
 .PHONY : autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/clean
 
 autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/depend:
-	cd /home/lizhiquan/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lizhiquan/catkin_ws/src /home/lizhiquan/catkin_ws/src/autoPilot /home/lizhiquan/catkin_ws/build /home/lizhiquan/catkin_ws/build/autoPilot /home/lizhiquan/catkin_ws/build/autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/elvis/Documents/autoPilot/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/elvis/Documents/autoPilot/catkin_ws/src /home/elvis/Documents/autoPilot/catkin_ws/src/autoPilot /home/elvis/Documents/autoPilot/catkin_ws/build /home/elvis/Documents/autoPilot/catkin_ws/build/autoPilot /home/elvis/Documents/autoPilot/catkin_ws/build/autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : autoPilot/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/depend
 

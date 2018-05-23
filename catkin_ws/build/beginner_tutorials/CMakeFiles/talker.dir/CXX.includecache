@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/lizhiquan/catkin_ws/src/beginner_tutorials/src/talker.cpp
+/home/elvis/Documents/autoPilot/catkin_ws/src/beginner_tutorials/src/talker.cpp
 ros/ros.h
-/home/lizhiquan/catkin_ws/src/beginner_tutorials/src/ros/ros.h
+/home/elvis/Documents/autoPilot/catkin_ws/src/beginner_tutorials/src/ros/ros.h
 std_msgs/String.h
-/home/lizhiquan/catkin_ws/src/beginner_tutorials/src/std_msgs/String.h
+/home/elvis/Documents/autoPilot/catkin_ws/src/beginner_tutorials/src/std_msgs/String.h
 geometry_msgs/Twist.h
-/home/lizhiquan/catkin_ws/src/beginner_tutorials/src/geometry_msgs/Twist.h
+/home/elvis/Documents/autoPilot/catkin_ws/src/beginner_tutorials/src/geometry_msgs/Twist.h
 sstream
 -
 

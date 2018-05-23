@@ -1,2 +1,2 @@
 autoPilot:beginner_tutorials
--DCATKIN_DEVEL_PREFIX=/home/lizhiquan/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/lizhiquan/catkin_ws/install -G Unix Makefiles
+-DCATKIN_DEVEL_PREFIX=/home/elvis/Documents/autoPilot/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/elvis/Documents/autoPilot/catkin_ws/install -G Unix Makefiles

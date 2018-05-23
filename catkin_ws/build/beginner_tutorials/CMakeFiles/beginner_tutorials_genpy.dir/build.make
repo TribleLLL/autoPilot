@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/lizhiquan/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/elvis/Documents/autoPilot/catkin_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/lizhiquan/catkin_ws/build
+CMAKE_BINARY_DIR = /home/elvis/Documents/autoPilot/catkin_ws/build
 
 # Utility rule file for beginner_tutorials_genpy.
 
@@ -63,10 +63,10 @@ beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/build: beginner_tutor
 .PHONY : beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/build
 
 beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/clean:
-	cd /home/lizhiquan/catkin_ws/build/beginner_tutorials && $(CMAKE_COMMAND) -P CMakeFiles/beginner_tutorials_genpy.dir/cmake_clean.cmake
+	cd /home/elvis/Documents/autoPilot/catkin_ws/build/beginner_tutorials && $(CMAKE_COMMAND) -P CMakeFiles/beginner_tutorials_genpy.dir/cmake_clean.cmake
 .PHONY : beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/clean
 
 beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/depend:
-	cd /home/lizhiquan/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lizhiquan/catkin_ws/src /home/lizhiquan/catkin_ws/src/beginner_tutorials /home/lizhiquan/catkin_ws/build /home/lizhiquan/catkin_ws/build/beginner_tutorials /home/lizhiquan/catkin_ws/build/beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/elvis/Documents/autoPilot/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/elvis/Documents/autoPilot/catkin_ws/src /home/elvis/Documents/autoPilot/catkin_ws/src/beginner_tutorials /home/elvis/Documents/autoPilot/catkin_ws/build /home/elvis/Documents/autoPilot/catkin_ws/build/beginner_tutorials /home/elvis/Documents/autoPilot/catkin_ws/build/beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : beginner_tutorials/CMakeFiles/beginner_tutorials_genpy.dir/depend
 

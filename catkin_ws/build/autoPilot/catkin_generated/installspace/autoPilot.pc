@@ -1,8 +1,8 @@
-prefix=/home/lizhiquan/catkin_ws/install
+prefix=/home/elvis/Documents/autoPilot/catkin_ws/install
 
 Name: autoPilot
 Description: Description of autoPilot
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/lizhiquan/catkin_ws/install/lib 
+Libs: -L/home/elvis/Documents/autoPilot/catkin_ws/install/lib 
 Requires: 

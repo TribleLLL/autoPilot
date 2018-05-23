@@ -56,8 +56,10 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   coefficients->values[3] = 0;
 
-
-  std::cout << "IN XYZ:" << cloud2->points[0].x << " " << cloud2->points[0].y << " " << cloud2->points[0].z;
+  for (int i = 0; i < 9; i++)
+  	std::cout << i << " IN XYZ:" << cloud2->points[i].x << " " 
+  				<< cloud2->points[i].y << " " << cloud2->points[i].z << std::endl;
+  std::cout << std::endl;
 
 
 // Create the filtering object
@@ -74,7 +76,12 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   pcl::toROSMsg(*cloud_projected, output2);
 
-  std::cout<<"test1\n";
+  
+
+  for (int i = 0; i < 9; i++)
+  	std::cout << i << " IN XYZ:" << cloud_projected->points[i].x 
+  			<< " " << cloud_projected->points[i].y << " "
+  			<< cloud_projected->points[i].z << std::endl;
 /******/
 
 

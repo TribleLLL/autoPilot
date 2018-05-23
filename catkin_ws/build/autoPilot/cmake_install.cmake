@@ -1,8 +1,8 @@
-# Install script for directory: /home/lizhiquan/catkin_ws/src/autoPilot
+# Install script for directory: /home/elvis/Documents/autoPilot/catkin_ws/src/autoPilot
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/lizhiquan/catkin_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/elvis/Documents/autoPilot/catkin_ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,18 +33,18 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/lizhiquan/catkin_ws/build/autoPilot/catkin_generated/installspace/autoPilot.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/elvis/Documents/autoPilot/catkin_ws/build/autoPilot/catkin_generated/installspace/autoPilot.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/autoPilot/cmake" TYPE FILE FILES
-    "/home/lizhiquan/catkin_ws/build/autoPilot/catkin_generated/installspace/autoPilotConfig.cmake"
-    "/home/lizhiquan/catkin_ws/build/autoPilot/catkin_generated/installspace/autoPilotConfig-version.cmake"
+    "/home/elvis/Documents/autoPilot/catkin_ws/build/autoPilot/catkin_generated/installspace/autoPilotConfig.cmake"
+    "/home/elvis/Documents/autoPilot/catkin_ws/build/autoPilot/catkin_generated/installspace/autoPilotConfig-version.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/autoPilot" TYPE FILE FILES "/home/lizhiquan/catkin_ws/src/autoPilot/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/autoPilot" TYPE FILE FILES "/home/elvis/Documents/autoPilot/catkin_ws/src/autoPilot/package.xml")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
@@ -54,7 +54,7 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/tier1"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/lizhiquan/catkin_ws/devel/lib/autoPilot/tier1")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/elvis/Documents/autoPilot/catkin_ws/devel/lib/autoPilot/tier1")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/tier1" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/tier1")
     file(RPATH_CHANGE
