@@ -17,7 +17,7 @@ rosrun autoPilot tier1 //运行接收器
 
 ```
 source devel/setup.bash 
-rosbag play point_cloud_projection.bag
+rosbag play point_cloud_projection.bag -l
 ```
 
 ```

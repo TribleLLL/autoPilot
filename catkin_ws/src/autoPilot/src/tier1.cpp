@@ -9,6 +9,8 @@
 #include <pcl/ModelCoefficients.h>
 #include <pcl/filters/project_inliers.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/passthrough.h>
+#include <pcl/filters/radius_outlier_removal.h> 
 #include <iostream>
 #include <cstring>
 // #include <std_msgs>
@@ -47,6 +49,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 /*****/
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromROSMsg(output, *cloud2);
+
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_projected(new pcl::PointCloud<pcl::PointXYZ>);
   sensor_msgs::PointCloud2 output2;
   pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients());
@@ -61,10 +64,42 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   coefficients->values[3] = 0;
 
+//*test
+  // float minzz=0;
   // for (int i = 0; i < 1; i++)
-  // 	std::cout << i << " IN XYZ:" << cloud2->points[i].x << " " 
-  // 				<< cloud2->points[i].y << " " << cloud2->points[i].z << std::endl;
+  // 		if (cloud2->points[i].z < minzz)
+  // 			minzz = cloud2->points[i].z;
+  // std:: cout << minzz<<std::endl;
+  // // 	std::cout << i << " IN XYZ:" << cloud2->points[i].x << " " 
+  // // 				<< cloud2->points[i].y << " " << cloud2->points[i].z << std::endl;
   // std::cout << std::endl;
+//test*
+
+
+// Create the filtering object  
+	pcl::PassThrough<pcl::PointXYZ> pass;  
+
+	pass.setInputCloud (cloud2);  
+
+	pass.setFilterFieldName ("z");  
+
+	pass.setFilterLimits (-0.4, 11);
+
+	//pass.setFilterLimitsNegative (true);  
+	pass.filter (*cloud2);
+
+ // build the filter
+    pcl::RadiusOutlierRemoval<pcl::PointXYZ> outrem;
+
+    outrem.setInputCloud(cloud2);
+    
+    outrem.setRadiusSearch(0.1);
+    
+    outrem.setMinNeighborsInRadius (5);
+    
+    // apply filter
+    outrem.filter (*cloud2);
+
 
 
 // Create the filtering object
@@ -81,7 +116,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   pcl::toROSMsg(*cloud_projected, output2);
 
-  pub.publish (output2);
+  // pub.publish (output2);
  
 
   // for (int i = 0; i < 1; i++)
@@ -149,7 +184,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
   		// else  			
   		// 	occupancyGrid.data[index++] = 100;
 
-  		if (map_2d[x][y] > 0) 
+  		if (map_2d[x][y] > 1) 
   			occupancyGrid.data[index++] = 100;
   		else
   			occupancyGrid.data[index++] = 0;
@@ -157,7 +192,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
 
   // Publish the data.
-  // pub.publish (occupancyGrid);
+  pub.publish (occupancyGrid);
 
 }
 
@@ -169,9 +204,9 @@ main (int argc, char** argv)
   ros::init (argc, argv, "my_pcl_tutorial");
   ros::NodeHandle nh;
 
-  // pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
-  
-  pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
+  pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
+
+  // pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
 
   ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
   
