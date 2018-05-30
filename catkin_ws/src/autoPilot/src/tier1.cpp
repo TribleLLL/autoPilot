@@ -81,7 +81,8 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   pcl::toROSMsg(*cloud_projected, output2);
 
-  
+  pub.publish (output2);
+ 
 
   // for (int i = 0; i < 1; i++)
   // 	std::cout << i << " OUT XYZ:" << cloud_projected->points[i].x 
@@ -156,7 +157,8 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
 
   // Publish the data.
-  pub.publish (occupancyGrid);
+  // pub.publish (occupancyGrid);
+
 }
 
 int
@@ -167,7 +169,9 @@ main (int argc, char** argv)
   ros::init (argc, argv, "my_pcl_tutorial");
   ros::NodeHandle nh;
 
-  pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
+  // pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
+  
+  pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
 
   ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
   
