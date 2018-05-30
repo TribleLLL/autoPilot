@@ -3,6 +3,11 @@
 
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o
  /home/elvis/Documents/autoPilot/catkin_ws/src/autoPilot/src/tier1.cpp
+ /opt/ros/kinetic/include/geometry_msgs/Point.h
+ /opt/ros/kinetic/include/geometry_msgs/Pose.h
+ /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
+ /opt/ros/kinetic/include/nav_msgs/MapMetaData.h
+ /opt/ros/kinetic/include/nav_msgs/OccupancyGrid.h
  /opt/ros/kinetic/include/pcl_conversions/pcl_conversions.h
  /opt/ros/kinetic/include/pcl_msgs/ModelCoefficients.h
  /opt/ros/kinetic/include/pcl_msgs/PointIndices.h

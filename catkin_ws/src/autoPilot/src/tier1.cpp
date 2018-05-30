@@ -10,7 +10,9 @@
 #include <pcl/filters/project_inliers.h>
 #include <pcl/filters/voxel_grid.h>
 #include <iostream>
-
+#include <cstring>
+// #include <std_msgs>
+#include <nav_msgs/OccupancyGrid.h>
 ros::Publisher pub;
 
 void 
@@ -23,7 +25,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
   // Do data processing here...
   output = *input;*/
   
-  std::cout<<"test3\n";
+  // std::cout<<"test3\n";
   pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
   pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
   pcl::PCLPointCloud2 cloud_filtered;
@@ -31,13 +33,16 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
   pcl_conversions::toPCL(*input, *cloud);
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud(cloudPtr);
-  sor.setLeafSize(0.1f,0.1f,0.1f);
+  sor.setLeafSize(0.02f,0.02f,0.02f);
   sor.filter(cloud_filtered);
 
   sensor_msgs::PointCloud2 output;
 
+  nav_msgs::OccupancyGrid occupancyGrid;
+
+
   pcl_conversions::fromPCL(cloud_filtered, output);
-  std::cout<<"test2\n";
+  // std::cout<<"test2\n";
 
 /*****/
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
@@ -56,10 +61,10 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   coefficients->values[3] = 0;
 
-  for (int i = 0; i < 9; i++)
-  	std::cout << i << " IN XYZ:" << cloud2->points[i].x << " " 
-  				<< cloud2->points[i].y << " " << cloud2->points[i].z << std::endl;
-  std::cout << std::endl;
+  // for (int i = 0; i < 1; i++)
+  // 	std::cout << i << " IN XYZ:" << cloud2->points[i].x << " " 
+  // 				<< cloud2->points[i].y << " " << cloud2->points[i].z << std::endl;
+  // std::cout << std::endl;
 
 
 // Create the filtering object
@@ -78,26 +83,91 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   
 
-  for (int i = 0; i < 9; i++)
-  	std::cout << i << " IN XYZ:" << cloud_projected->points[i].x 
-  			<< " " << cloud_projected->points[i].y << " "
-  			<< cloud_projected->points[i].z << std::endl;
+  // for (int i = 0; i < 1; i++)
+  // 	std::cout << i << " OUT XYZ:" << cloud_projected->points[i].x 
+  // 			<< " " << cloud_projected->points[i].y << " "
+  // 			<< cloud_projected->points[i].z << std::endl;
 /******/
+  std::cout << "height " << cloud_projected->height << std::endl;
+  std::cout << "width " << cloud_projected->width << std::endl;
+  std::cout << "is_dense " << cloud_projected->is_dense << std::endl;
+  std::cout << "points.size " << cloud_projected->size() << std::endl;
+  float minx, miny, maxx, maxy;
+  minx = maxx = cloud_projected->points[0].x;
+  miny = maxy = cloud_projected->points[0].y;
+  for (int i=0; i<cloud_projected->size();i++){
+  	if (cloud_projected->points[i].x > maxx) maxx = cloud_projected->points[i].x;
+  	if (cloud_projected->points[i].x < minx) minx = cloud_projected->points[i].x;
+  	if (cloud_projected->points[i].y > maxy) maxy = cloud_projected->points[i].y;
+  	if (cloud_projected->points[i].y < miny) miny = cloud_projected->points[i].y;
+  }
+  // std::cout <<"minx = "<< minx << "maxx = " << maxx << std::endl;
+  // std::cout <<"miny = "<< miny << "maxy = " << maxy << std::endl;
+
+  int width,height,cof;
+  cof = 3;
+  width = 270 * cof;
+  height = 360 * cof;
+
+  int map_2d[width+1][height+1];
+  memset(map_2d,0,sizeof(map_2d));
+  for (int i=0; i<cloud_projected->size();i++){
+  	map_2d[(int)((cloud_projected->points[i].x - minx)*cof*10)][(int)((cloud_projected->points[i].y- miny)*cof*10)]++;
+  }
+
+  occupancyGrid.header.seq = cloud_projected->header.seq;
+  // occupancyGrid.header.stamp = cloud_projected->header.stamp;
+  occupancyGrid.header.frame_id = cloud_projected->header.frame_id;
+  occupancyGrid.info.resolution = 0.1/cof;
+  occupancyGrid.info.width = width;
+  occupancyGrid.info.height = height;
+  // occupancyGrid.info.origin.position.x = cloud_projected->sensor_origin_.x ;
+  // occupancyGrid.info.origin.position.y = cloud_projected->sensor_origin_.y ;
+  occupancyGrid.info.origin.position.x = 0;
+  occupancyGrid.info.origin.position.y = 0;
+  occupancyGrid.info.origin.position.z = 0;
+  occupancyGrid.info.origin.orientation.x = 0;
+  occupancyGrid.info.origin.orientation.y = 0; 
+  occupancyGrid.info.origin.orientation.z = 0.0;
+  occupancyGrid.info.origin.orientation.w = 1.0;
+  occupancyGrid.data.resize(width*height);
+  // memset(occupancyGrid.data, 0, sizeof(occupancyGrid.data) );
+  int index = 0;
+  for (int y = 0; y < height; y++)
+  	for (int x = 0; x < width; x++)
+  		// if (map_2d[x][y] == 0) 
+  		// 	occupancyGrid.data[index++] = 0;
+  		// else if (map_2d[x][y] == 1) 
+  		// 	occupancyGrid.data[index++] = 20;
+  		// else if (map_2d[x][y] == 2) 
+  		// 	occupancyGrid.data[index++] = 40;
+  		// else if (map_2d[x][y] == 3) 
+  		// 	occupancyGrid.data[index++] = 60;
+  		// else if (map_2d[x][y] == 4) 
+  		// 	occupancyGrid.data[index++] = 80;
+  		// else  			
+  		// 	occupancyGrid.data[index++] = 100;
+
+  		if (map_2d[x][y] > 0) 
+  			occupancyGrid.data[index++] = 100;
+  		else
+  			occupancyGrid.data[index++] = 0;
+
 
 
   // Publish the data.
-  pub.publish (output2);
+  pub.publish (occupancyGrid);
 }
 
 int
 main (int argc, char** argv)
 {
   // Initialize ROS
-  std::cout<<"test4\n";
+  std::cout<<"bein4\n";
   ros::init (argc, argv, "my_pcl_tutorial");
   ros::NodeHandle nh;
 
-  pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
+  pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
 
   ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
   
