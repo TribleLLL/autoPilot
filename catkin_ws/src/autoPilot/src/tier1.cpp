@@ -15,6 +15,13 @@
 #include <cstring>
 // #include <std_msgs>
 #include <nav_msgs/OccupancyGrid.h>
+
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <geometry_msgs/PoseStamped.h>
+
+
+geometry_msgs::PoseWithCovarianceStamped* _initpose;
+geometry_msgs::PoseStamped* _goalpose;
 ros::Publisher pub;
 
 void 
@@ -124,10 +131,10 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
   // 			<< " " << cloud_projected->points[i].y << " "
   // 			<< cloud_projected->points[i].z << std::endl;
 /******/
-  std::cout << "height " << cloud_projected->height << std::endl;
-  std::cout << "width " << cloud_projected->width << std::endl;
-  std::cout << "is_dense " << cloud_projected->is_dense << std::endl;
-  std::cout << "points.size " << cloud_projected->size() << std::endl;
+  // std::cout << "height " << cloud_projected->height << std::endl;
+  // std::cout << "width " << cloud_projected->width << std::endl;
+  // std::cout << "is_dense " << cloud_projected->is_dense << std::endl;
+  // std::cout << "points.size " << cloud_projected->size() << std::endl;
   float minx, miny, maxx, maxy;
   minx = maxx = cloud_projected->points[0].x;
   miny = maxy = cloud_projected->points[0].y;
@@ -184,7 +191,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
   		// else  			
   		// 	occupancyGrid.data[index++] = 100;
 
-  		if (map_2d[x][y] > 1) 
+  		if (map_2d[x][y] > 0) 
   			occupancyGrid.data[index++] = 100;
   		else
   			occupancyGrid.data[index++] = 0;
@@ -196,6 +203,26 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
 }
 
+
+void 
+initialpose (const geometry_msgs::PoseWithCovarianceStamped& input){
+	_initpose = new geometry_msgs::PoseWithCovarianceStamped();
+	*_initpose = input;
+	std::cout << "initialpose" << _initpose->pose.pose.position.x << ", "
+	<< _initpose->pose.pose.position.y << ", "
+	<< _initpose->pose.pose.position.z << "\n ";
+}
+
+void 
+goal (const geometry_msgs::PoseStamped& input){
+	_goalpose = new geometry_msgs::PoseStamped();
+	*_goalpose = input;
+	std::cout << "goalpose" << _goalpose->pose.position.x << ", "
+	<< _goalpose->pose.position.y << ", "
+	<< _goalpose->pose.position.z << "\n ";
+}
+
+
 int
 main (int argc, char** argv)
 {
@@ -204,11 +231,21 @@ main (int argc, char** argv)
   ros::init (argc, argv, "my_pcl_tutorial");
   ros::NodeHandle nh;
 
+  _initpose = NULL;
+  _goalpose = NULL;
+
+
   pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
 
   // pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
 
   ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
+
+  ros::Subscriber sub_initialpose = nh.subscribe ("initialpose", 1, initialpose);
+
+  ros::Subscriber sub_goal = nh.subscribe ("move_base_simple/goal", 1,  goal);
+
+ 
   
   // Spin
   ros::spin ();

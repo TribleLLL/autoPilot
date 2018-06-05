@@ -4,6 +4,9 @@
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /home/elvis/Documents/autoPilot/catkin_ws/src/autoPilot/src/tier1.cpp
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Pose.h
+autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseStamped.h
+autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovariance.h
+autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/geometry_msgs/PoseWithCovarianceStamped.h
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Quaternion.h
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/nav_msgs/MapMetaData.h
 autoPilot/CMakeFiles/tier1.dir/src/tier1.cpp.o: /opt/ros/kinetic/include/nav_msgs/OccupancyGrid.h
