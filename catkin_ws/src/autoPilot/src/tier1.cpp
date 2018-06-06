@@ -13,16 +13,27 @@
 #include <pcl/filters/radius_outlier_removal.h> 
 #include <iostream>
 #include <cstring>
+#include <list>
+#include <math.h>
 // #include <std_msgs>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Path.h>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 
-
+using std::list;
 geometry_msgs::PoseWithCovarianceStamped* _initpose;
 geometry_msgs::PoseStamped* _goalpose;
+nav_msgs::Path* _path;
+
 ros::Publisher pub;
+ros::Publisher pub_path;
+
+float minx, miny;
+int cof;
+int width,height;
+bool map_obs[500][500];
 
 void 
 cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
@@ -147,7 +158,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
   // std::cout <<"minx = "<< minx << "maxx = " << maxx << std::endl;
   // std::cout <<"miny = "<< miny << "maxy = " << maxy << std::endl;
 
-  int width,height,cof;
+  // int width,height,cof;
   cof = 3;
   width = 270 * cof;
   height = 360 * cof;
@@ -226,18 +237,21 @@ goal (const geometry_msgs::PoseStamped& input){
 int
 main (int argc, char** argv)
 {
-  // Initialize ROS
-  std::cout<<"bein4\n";
+std::cout<<"bein4\n";
   ros::init (argc, argv, "my_pcl_tutorial");
   ros::NodeHandle nh;
+  ros::NodeHandle nh2;
 
   _initpose = NULL;
   _goalpose = NULL;
+  _path = NULL;
 
 
   pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
 
   // pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
+
+  pub_path = nh2.advertise<nav_msgs::Path> ("output_path", 1);
 
   ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
 
