@@ -15,6 +15,7 @@
 #include <cstring>
 // #include <std_msgs>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Path.h>
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -22,7 +23,10 @@
 
 geometry_msgs::PoseWithCovarianceStamped* _initpose;
 geometry_msgs::PoseStamped* _goalpose;
+nav_msgs::Path* _path;
+
 ros::Publisher pub;
+ros::Publisher pub_path;
 
 void 
 cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
@@ -200,9 +204,41 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   // Publish the data.
   pub.publish (occupancyGrid);
-
+  if (_path != NULL)
+  	 pub_path.publish (*_path);
 }
 
+
+void drawPath(){
+	if (_initpose != NULL && _goalpose != NULL){		
+		float d_x = (_goalpose->pose.position.x - _initpose->pose.pose.position.x)/100;
+		float d_y = (_goalpose->pose.position.y - _initpose->pose.pose.position.y)/100;
+
+		if (_path==NULL)
+			_path = new nav_msgs::Path();
+			_path->poses.resize(101);
+			_path->header.frame_id = "odom";
+		geometry_msgs::PoseStamped this_pose_stamped;	
+
+		for (int i = 0; i <= 100 ; i++){
+			_path->poses[i].pose.position.x = _initpose->pose.pose.position.x + d_x * i;
+			_path->poses[i].pose.position.y = _initpose->pose.pose.position.y + d_y * i;
+			_path->poses[i].pose.position.z = 0;
+			_path->poses[i].header.frame_id="odom";
+			// this_pose_stamped.pose.position.x = _initpose->pose.pose.position.x + d_x * i;
+			// this_pose_stamped.pose.position.y = _initpose->pose.pose.position.y + d_y * i;
+			// this_pose_stamped.pose.position.z = 0;
+			// this_pose_stamped.pose.orientation.x = _initpose->pose.pose.orientation.x;
+   //      	this_pose_stamped.pose.orientation.y = _initpose->pose.pose.orientation.y;
+   //      	this_pose_stamped.pose.orientation.z = _initpose->pose.pose.orientation.z;
+   //      	this_pose_stamped.pose.orientation.w = _initpose->pose.pose.orientation.w;
+
+        	// this_pose_stamped.header.frame_id="odom";
+        	// _path->poses.push_back(this_pose_stamped);
+
+		}		
+	}
+}
 
 void 
 initialpose (const geometry_msgs::PoseWithCovarianceStamped& input){
@@ -211,6 +247,8 @@ initialpose (const geometry_msgs::PoseWithCovarianceStamped& input){
 	std::cout << "initialpose" << _initpose->pose.pose.position.x << ", "
 	<< _initpose->pose.pose.position.y << ", "
 	<< _initpose->pose.pose.position.z << "\n ";
+
+	drawPath();
 }
 
 void 
@@ -220,7 +258,10 @@ goal (const geometry_msgs::PoseStamped& input){
 	std::cout << "goalpose" << _goalpose->pose.position.x << ", "
 	<< _goalpose->pose.position.y << ", "
 	<< _goalpose->pose.position.z << "\n ";
+
+	drawPath();
 }
+
 
 
 int
@@ -230,14 +271,18 @@ main (int argc, char** argv)
   std::cout<<"bein4\n";
   ros::init (argc, argv, "my_pcl_tutorial");
   ros::NodeHandle nh;
+  ros::NodeHandle nh2;
 
   _initpose = NULL;
   _goalpose = NULL;
+  _path = NULL;
 
 
   pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
 
   // pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
+
+  pub_path = nh2.advertise<nav_msgs::Path> ("output_path", 1);
 
   ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
 
