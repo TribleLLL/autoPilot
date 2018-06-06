@@ -33,7 +33,7 @@ ros::Publisher pub_path;
 float minx, miny;
 int cof;
 int width,height;
-int map_2d[271][361];
+bool map_obs[271][361];
 
 
 void 
@@ -151,7 +151,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 	width = 270 * cof;
 	height = 360 * cof;
 
-  
+  int map_2d[width+1][height+1];
 	memset(map_2d,0,sizeof(map_2d));
 	for (int i=0; i<cloud_projected->size();i++){
 		map_2d[(int)((cloud_projected->points[i].x - minx)*cof*10)][(int)((cloud_projected->points[i].y- miny)*cof*10)]++;
@@ -190,8 +190,10 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 			// else       
 			//  occupancyGrid.data[index++] = 100;
 
-		  	if (map_2d[x][y] > 0) 
+		  	if (map_2d[x][y] > 0) {
 		    	occupancyGrid.data[index++] = 100;
+          map_obs[x][y] = 1;
+        }
 		  	else
 		    	occupancyGrid.data[index++] = 0;
 		}
@@ -258,7 +260,7 @@ void updateNeighbour(Point *present) {
         nb[i].F = nb[i].G + nb[i].H;
         nb[i].father = present;
         //it is not a obstruction
-		if (map_2d[nb[i].x][nb[i].y] != 100){
+		if (map_obs[nb[i].x][nb[i].y] != 1){
 			// it is not in closelist
 			if (isInList(closelist, &nb[i]) == NULL){		
 
@@ -347,7 +349,7 @@ initialpose (const geometry_msgs::PoseWithCovarianceStamped& input){
 	std::cout << "initialpose" << _initpose->pose.pose.position.x << ", "
 				<< _initpose->pose.pose.position.y << ", "
 				<< _initpose->pose.pose.position.z << "\n ";
-	// drawPath();
+	drawPath();
 }
 
 void 
@@ -357,7 +359,7 @@ goal (const geometry_msgs::PoseStamped& input){
 	std::cout << "goalpose" << _goalpose->pose.position.x << ", "
 				<< _goalpose->pose.position.y << ", "
 				<< _goalpose->pose.position.z << "\n ";
-	// drawPath();
+	drawPath();
 }
 
 
@@ -375,6 +377,7 @@ main (int argc, char** argv)
 	_goalpose = NULL;
 	_path = NULL;
 
+  memset(map_obs,0,sizeof(map_obs));
 
 	pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
 
