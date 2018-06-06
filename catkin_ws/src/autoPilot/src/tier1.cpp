@@ -22,7 +22,9 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 
+using std::endl;
 using std::list;
+using std::cout;
 geometry_msgs::PoseWithCovarianceStamped* _initpose;
 geometry_msgs::PoseStamped* _goalpose;
 nav_msgs::Path* _path;
@@ -33,7 +35,7 @@ ros::Publisher pub_path;
 float minx, miny;
 int cof;
 int width,height;
-bool map_obs[271][361];
+bool map_obs[271*3][361*3];
 
 
 void 
@@ -151,7 +153,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 	width = 270 * cof;
 	height = 360 * cof;
 
-  int map_2d[width+1][height+1];
+    int map_2d[width+1][height+1];
 	memset(map_2d,0,sizeof(map_2d));
 	for (int i=0; i<cloud_projected->size();i++){
 		map_2d[(int)((cloud_projected->points[i].x - minx)*cof*10)][(int)((cloud_projected->points[i].y- miny)*cof*10)]++;
@@ -252,14 +254,14 @@ void updateNeighbour(Point *present) {
 	nb[1].x = present->x - 1; nb[1].y = present->y;
 	nb[2].x = present->x;	  nb[2].y = present->y + 1;
 	nb[3].x = present->x;     nb[3].y = present->y - 1;
-
+  cout << present->x << "," << present->y << endl;
 	for (int i = 0; i < 4; i++)
 	{
 		nb[i].G = present->G + 10;
 		nb[i].H = abs(dest.x - nb[i].x ) + abs(dest.y - nb[i].y);
-        nb[i].F = nb[i].G + nb[i].H;
-        nb[i].father = present;
-        //it is not a obstruction
+    nb[i].F = nb[i].G + nb[i].H;
+    nb[i].father = present;
+    //it is not a obstruction
 		if (map_obs[nb[i].x][nb[i].y] != 1){
 			// it is not in closelist
 			if (isInList(closelist, &nb[i]) == NULL){		
@@ -282,7 +284,7 @@ void updateNeighbour(Point *present) {
 
 void drawPath(){
 /**A****/
-
+  cout << "begin drawPath \n";
 	start.x = (int)((_initpose->pose.pose.position.x - minx)*cof*10);
 	start.y = (int)((_initpose->pose.pose.position.y - miny)*cof*10);
 
@@ -291,30 +293,58 @@ void drawPath(){
 
 	start.G = 0;
 	start.F = start.H =  abs(dest.x - start.x ) + abs(dest.y - start.y);
+  start.father = NULL;
 
-	openlist.clear();
-	closelist.clear();  
+  cout << "initial\n";
+	// openlist.clear();
+	// closelist.clear(); 
+
+  cout << "clear\n";
 
 	openlist.push_back(&start);
 
+  cout << "push start point\n";
+
 	Point* present;
 	while(isInList(openlist, &dest) == NULL){
+    // cout << "1\n";
 		present = getLeastPoint();
 		openlist.remove(present);
 		closelist.push_back(present);
 		updateNeighbour(present);
 	}
 
+  cout << "find the dest\n";
 	present = &dest;	
     geometry_msgs::PoseStamped this_pose_stamped;
     this_pose_stamped.header.frame_id="odom";
+  cout << "2"<<endl;
+  int count = 0;
+  while (present != NULL){
+    cout << "num" << count << endl;
+    count++;
+    present = present->father;
+  }
+  _path->poses.resize(count+1);
 
+  cout << "count = "<<count<<endl;
+
+  present = &dest;
+  int ct = 0;
 	while (present != NULL){		
-        this_pose_stamped.pose.position.x = float(present->x) /cof /10 + minx;
-        this_pose_stamped.pose.position.y = float(present->y) /cof /10 + miny;        
-        _path->poses.push_back(this_pose_stamped);
-        present = present->father;
+    cout<<"3"<<endl;
+
+    _path->poses[ct].pose.position.x = float(present->x) /cof /10 + minx;
+    _path->poses[ct].pose.position.y = float(present->y) /cof /10 + miny;
+    _path->poses[ct].pose.position.z = 0;
+    _path->poses[ct].header.frame_id="odom"; 
+    ct++;
+    // cout<<"4"<<endl;      
+    // _path->poses.push_back(this_pose_stamped);
+    cout << "point "<< present->x << ", " << present->y <<endl;
+    present = present->father;
 	}
+  cout << "finish drawPath\n";
 
 
 
@@ -348,8 +378,9 @@ initialpose (const geometry_msgs::PoseWithCovarianceStamped& input){
 	*_initpose = input;
 	std::cout << "initialpose" << _initpose->pose.pose.position.x << ", "
 				<< _initpose->pose.pose.position.y << ", "
-				<< _initpose->pose.pose.position.z << "\n ";
-	drawPath();
+				<< _initpose->pose.pose.position.z << "\n ";        
+	if (_initpose != NULL && _goalpose != NULL)
+    drawPath();
 }
 
 void 
@@ -359,7 +390,8 @@ goal (const geometry_msgs::PoseStamped& input){
 	std::cout << "goalpose" << _goalpose->pose.position.x << ", "
 				<< _goalpose->pose.position.y << ", "
 				<< _goalpose->pose.position.z << "\n ";
-	drawPath();
+	if (_initpose != NULL && _goalpose != NULL)
+  drawPath();
 }
 
 
