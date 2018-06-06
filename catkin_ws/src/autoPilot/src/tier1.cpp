@@ -22,7 +22,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 
-
+using std::list;
 geometry_msgs::PoseWithCovarianceStamped* _initpose;
 geometry_msgs::PoseStamped* _goalpose;
 nav_msgs::Path* _path;
@@ -214,19 +214,20 @@ struct Point {
 		// inOpenList = inCloseList = false;
 		father = NULL;
 	}
-}
+};
+typedef list<Point*> list_PointPtr;
 
 // Point _MAP_2D[500][500];
-std::list<Point*> openList;
-std::list<Point*> closelist;
+list_PointPtr openlist;
+list_PointPtr closelist;
 Point start,dest;
 
 Point* isInList(std::list<Point*> &list, Point* point)
 {  
     //判断某个节点是否在列表中，这里不能比较指针，因为每次加入列表是新开辟的节点，只能比较坐标  
-    for(auto p:list)  
-        if(p -> x == point->x && p -> y == point -> y)  
-            return p;  
+    for(list_PointPtr::iterator p = list.begin(); p != list.end(); p++)  
+        if((*p)-> x == point -> x && (*p)-> y == point -> y)  
+            return (*p);  
     return NULL;  
 }  
 
@@ -234,10 +235,10 @@ Point* getLeastPoint()
 {  
     if(!openlist.empty())  
     {  
-        auto resPoint = openlist.front();  
-        for(auto &point:openlist)  
-            if(point->F < resPoint->F)  
-                resPoint = point;  
+        Point* resPoint = openlist.front();  
+        for(list_PointPtr::iterator point = openlist.begin(); point != openlist.end(); point++)  
+            if((*point)->F < resPoint->F)  
+                resPoint = (*point);  
         return resPoint;  
     }  
     return NULL;  
@@ -245,14 +246,14 @@ Point* getLeastPoint()
 
 void updateNeighbour(Point *present) {
 	Point nb[4];
-	nb[0].x = present.x + 1; nb[0].y = present.y;
-	nb[1].x = present.x - 1; nb[1].y = present.y;
-	nb[2].x = present.x;	 nb[2].y = present.y + 1;
-	nb[3].x = present.x;     nb[3].y = present.y - 1;
+	nb[0].x = present->x + 1; nb[0].y = present->y;
+	nb[1].x = present->x - 1; nb[1].y = present->y;
+	nb[2].x = present->x;	  nb[2].y = present->y + 1;
+	nb[3].x = present->x;     nb[3].y = present->y - 1;
 
 	for (int i = 0; i < 4; i++)
 	{
-		nb[i].G = present.G + 10;
+		nb[i].G = present->G + 10;
 		nb[i].H = abs(dest.x - nb[i].x ) + abs(dest.y - nb[i].y);
         nb[i].F = nb[i].G + nb[i].H;
         nb[i].father = present;
