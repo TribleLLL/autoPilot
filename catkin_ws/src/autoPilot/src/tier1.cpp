@@ -33,7 +33,7 @@ ros::Publisher pub_path;
 float minx, miny;
 int cof;
 int width,height;
-int map_2d[500][500];
+int map_2d[271][361];
 
 
 void 
@@ -347,7 +347,7 @@ initialpose (const geometry_msgs::PoseWithCovarianceStamped& input){
 	std::cout << "initialpose" << _initpose->pose.pose.position.x << ", "
 				<< _initpose->pose.pose.position.y << ", "
 				<< _initpose->pose.pose.position.z << "\n ";
-	drawPath();
+	// drawPath();
 }
 
 void 
@@ -357,7 +357,7 @@ goal (const geometry_msgs::PoseStamped& input){
 	std::cout << "goalpose" << _goalpose->pose.position.x << ", "
 				<< _goalpose->pose.position.y << ", "
 				<< _goalpose->pose.position.z << "\n ";
-	drawPath();
+	// drawPath();
 }
 
 
