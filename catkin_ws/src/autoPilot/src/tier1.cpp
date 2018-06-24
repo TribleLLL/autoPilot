@@ -194,8 +194,8 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
 		  	if (map_2d[x][y] > 0) {
 		    	occupancyGrid.data[index++] = 100;
-          map_obs[x][y] = 1;
-        }
+	          map_obs[x][y] = 1;
+	        }
 		  	else
 		    	occupancyGrid.data[index++] = 0;
 		}
@@ -254,7 +254,7 @@ void updateNeighbour(Point *present) {
 	nb[1].x = present->x - 1; nb[1].y = present->y;
 	nb[2].x = present->x;	  nb[2].y = present->y + 1;
 	nb[3].x = present->x;     nb[3].y = present->y - 1;
-  // cout << present->x << "," << present->y << endl;
+  	// cout << present->x << "," << present->y << endl;
 	for (int i = 0; i < 4; i++)
 	{
 		nb[i].G = present->G + 10;
@@ -285,7 +285,7 @@ void updateNeighbour(Point *present) {
 
 void drawPath(){
 /**A****/
-  cout << "begin drawPath \n";
+	cout << "begin drawPath \n";
 	start.x = (int)((_initpose->pose.pose.position.x - minx)*cof*10);
 	start.y = (int)((_initpose->pose.pose.position.y - miny)*cof*10);
 
@@ -294,18 +294,18 @@ void drawPath(){
 
 	start.G = 0;
 	start.F = start.H =  abs(dest.x - start.x ) + abs(dest.y - start.y);
-  start.father = NULL;
+	start.father = NULL;
 
-  cout << "initial\n";
+	cout << "initial\n";
 	// openlist.clear();
 	// closelist.clear(); 
   	_path = new nav_msgs::Path();
     (*_path).header.frame_id="odom";
-  cout << "clear\n";
+	cout << "clear\n";
 
 	openlist.push_back(&start);
 
-  cout << "push start point\n";
+	cout << "push start point\n";
 
 	Point* present;
 	while(isInList(openlist, &dest) == NULL){
@@ -316,59 +316,59 @@ void drawPath(){
 		updateNeighbour(present);
 	}
 
-  cout << "find the dest\n";
+	cout << "find the dest\n";
 	
 	present = isInList(openlist, &dest);	
 	// cout << present->father->x << " , " <<  present->father->y << endl;
     geometry_msgs::PoseStamped this_pose_stamped;
     this_pose_stamped.header.frame_id="odom";
-  cout << "2"<<endl;
-  int count = 0;
-  while (present != NULL){
-    cout << "num " << count << endl;
-    count++;
-    if(present == &start) break;
-    present = present->father;
+	cout << "2"<<endl;
+  	int count = 0;
+  	while (present != NULL){
+	    cout << "num " << count << endl;
+	    count++;
+	    if(present == &start) break;
+	    present = present->father;
 
-    // cout << present->x << " , " <<  present->y << endl;
-  }
-
-  cout << "finish???" << endl;
-
-  cout << "count1 = " << count << endl;
-
-  // _path->poses.resize(count+1);
-
-  cout << "count2 = "<<count<<endl;
-
-  present = isInList(openlist, &dest);
-  int ct = 0;
-	while (present != NULL){		
-    cout<<"3"<<endl;
-
-    // _path->poses[ct].pose.position.x = float(present->x) /cof /10 + minx;
-    // _path->poses[ct].pose.position.y = float(present->y) /cof /10 + miny;
-    // _path->poses[ct].pose.position.z = 0;
-    // _path->poses[ct].header.frame_id="odom"; 
-    // ct++;
-    // cout<<"4"<<endl;      
-    // // _path->poses.push_back(this_pose_stamped);
-    // cout << "point "<< present->x << ", " << present->y <<endl;
-	geometry_msgs::PoseStamped this_pose_stamped;
-	cout<<"4.1"<<endl;     
-	this_pose_stamped.pose.position.x = float(present->x) /cof /10 + minx;
-	cout<<"4.2"<<endl;     
-	this_pose_stamped.pose.position.y = float(present->y) /cof /10 + miny;
-	cout<<"4.3"<<endl;     
-	this_pose_stamped.pose.position.z = 0;
-	cout<<"4.4"<<endl;     
-	this_pose_stamped.header.frame_id = "odom";
-	cout<<"4.5"<<endl;     
-	(*_path).poses.push_back(this_pose_stamped);
-	cout<<"4.6"<<endl;     
-    present = present->father;
+	    // cout << present->x << " , " <<  present->y << endl;
 	}
-  cout << "finish drawPath\n";
+
+	cout << "finish???" << endl;
+
+	cout << "count1 = " << count << endl;
+
+	// _path->poses.resize(count+1);
+
+	cout << "count2 = "<<count<<endl;
+
+	present = isInList(openlist, &dest);
+	int ct = 0;
+	while (present != NULL){		
+	    cout<<"3"<<endl;
+
+	    // _path->poses[ct].pose.position.x = float(present->x) /cof /10 + minx;
+	    // _path->poses[ct].pose.position.y = float(present->y) /cof /10 + miny;
+	    // _path->poses[ct].pose.position.z = 0;
+	    // _path->poses[ct].header.frame_id="odom"; 
+	    // ct++;
+	    // cout<<"4"<<endl;      
+	    // // _path->poses.push_back(this_pose_stamped);
+	    // cout << "point "<< present->x << ", " << present->y <<endl;
+		geometry_msgs::PoseStamped this_pose_stamped;
+		cout<<"4.1"<<endl;     
+		this_pose_stamped.pose.position.x = float(present->x) /cof /10 + minx;
+		cout<<"4.2"<<endl;     
+		this_pose_stamped.pose.position.y = float(present->y) /cof /10 + miny;
+		cout<<"4.3"<<endl;     
+		this_pose_stamped.pose.position.z = 0;
+		cout<<"4.4"<<endl;     
+		this_pose_stamped.header.frame_id = "odom";
+		cout<<"4.5"<<endl;     
+		(*_path).poses.push_back(this_pose_stamped);
+		cout<<"4.6"<<endl;     
+	    present = present->father;
+	}
+ 	cout << "finish drawPath\n";
 
 
 
@@ -433,7 +433,7 @@ main (int argc, char** argv)
 	_goalpose = NULL;
 	_path = NULL;
 
-  memset(map_obs,0,sizeof(map_obs));
+	memset(map_obs,0,sizeof(map_obs));
 
 	pub = nh.advertise<nav_msgs::OccupancyGrid> ("output", 1);
 
