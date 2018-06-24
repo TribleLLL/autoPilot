@@ -28,14 +28,17 @@ using std::cout;
 geometry_msgs::PoseWithCovarianceStamped* _initpose;
 geometry_msgs::PoseStamped* _goalpose;
 nav_msgs::Path* _path;
+nav_msgs::Path* _testObs;
 
 ros::Publisher pub;
 ros::Publisher pub_path;
+ros::Publisher pub_testObs;
 
 float minx, miny;
 int cof;
 int width,height;
 bool map_obs[271*3][361*3];
+bool istestObs = false;
 
 
 void 
@@ -165,10 +168,20 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 	occupancyGrid.info.resolution = 0.1/cof;
 	occupancyGrid.info.width = width;
 	occupancyGrid.info.height = height;
-	// occupancyGrid.info.origin.position.x = cloud_projected->sensor_origin_.x ;
-	// occupancyGrid.info.origin.position.y = cloud_projected->sensor_origin_.y ;
-	occupancyGrid.info.origin.position.x = 0;
-	occupancyGrid.info.origin.position.y = 0;
+	occupancyGrid.info.origin.position.x = cloud_projected->sensor_origin_.x() ;
+	occupancyGrid.info.origin.position.y = cloud_projected->sensor_origin_.y() ;
+	cout << "---------------------------------------\n";
+	cout << "---------------------------------------\n";
+	cout << "---------------------------------------\n";
+	cout << (float)(cloud_projected->sensor_origin_.x()) << endl;
+	cout << (float)(cloud_projected->sensor_origin_.y()) << endl;	
+	cout << "---------------------------------------\n";
+	cout << "---------------------------------------\n";
+	cout << "---------------------------------------\n";
+	cout << "---------------------------------------\n";
+
+	// occupancyGrid.info.origin.position.x = 0;
+	// occupancyGrid.info.origin.position.y = 0;
 	occupancyGrid.info.origin.position.z = 0;
 	occupancyGrid.info.origin.orientation.x = 0;
 	occupancyGrid.info.origin.orientation.y = 0; 
@@ -194,17 +207,35 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
 		  	if (map_2d[x][y] > 0) {
 		    	occupancyGrid.data[index++] = 100;
-	          map_obs[x][y] = 1;
+	          	map_obs[x][y] = 1;
+
+	          	if (istestObs == false){
+          			geometry_msgs::PoseStamped this_pose_stamped;
+					cout<<"5.1"<<endl;     
+					this_pose_stamped.pose.position.x = float(x) /cof /10 + minx;
+					cout<<"5.2"<<endl;     
+					this_pose_stamped.pose.position.y = float(y) /cof /10 + miny;
+					cout<<"5.3"<<endl;     
+					this_pose_stamped.pose.position.z = 0;
+					cout<<"5.4"<<endl;     
+					this_pose_stamped.header.frame_id = "odom";
+					cout<<"5.5"<<endl;     
+					(*_testObs).poses.push_back(this_pose_stamped);
+					cout<<"5.6"<<endl;  
+	          	}
+	             
 	        }
 		  	else
 		    	occupancyGrid.data[index++] = 0;
 		}
-
+	istestObs = true;
 
 	// Publish the data.
 	pub.publish (occupancyGrid);
 	if (_path != NULL)
 	 	pub_path.publish (*_path);
+	if (_testObs != NULL)
+	 	pub_testObs.publish (*_testObs);
 }
 
 struct Point {
@@ -257,7 +288,7 @@ void updateNeighbour(Point *present) {
   	// cout << present->x << "," << present->y << endl;
 	for (int i = 0; i < 4; i++)
 	{
-		nb[i].G = present->G + 10;
+		nb[i].G = present->G + 1;
 		nb[i].H = abs(dest.x - nb[i].x ) + abs(dest.y - nb[i].y);
     nb[i].F = nb[i].G + nb[i].H;
     nb[i].father = present;
@@ -415,7 +446,7 @@ goal (const geometry_msgs::PoseStamped& input){
 				<< _goalpose->pose.position.y << ", "
 				<< _goalpose->pose.position.z << "\n ";
 	if (_initpose != NULL && _goalpose != NULL)
-  drawPath();
+ 	drawPath();
 }
 
 
@@ -428,10 +459,15 @@ main (int argc, char** argv)
 	ros::init (argc, argv, "my_pcl_tutorial");
 	ros::NodeHandle nh;
 	ros::NodeHandle nh2;
+	ros::NodeHandle nh3;
 
 	_initpose = NULL;
 	_goalpose = NULL;
 	_path = NULL;
+	_testObs = NULL;
+
+	_testObs = new nav_msgs::Path();
+    (*_testObs).header.frame_id="odom";
 
 	memset(map_obs,0,sizeof(map_obs));
 
@@ -440,6 +476,8 @@ main (int argc, char** argv)
 	// pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
 
 	pub_path = nh2.advertise<nav_msgs::Path> ("output_path", 1);
+
+	pub_testObs = nh3.advertise<nav_msgs::Path> ("output_testObs", 1);
 
 	ros::Subscriber sub = nh.subscribe ("point_cloud", 1, cloud_cb);
 
