@@ -254,13 +254,14 @@ void updateNeighbour(Point *present) {
 	nb[1].x = present->x - 1; nb[1].y = present->y;
 	nb[2].x = present->x;	  nb[2].y = present->y + 1;
 	nb[3].x = present->x;     nb[3].y = present->y - 1;
-  cout << present->x << "," << present->y << endl;
+  // cout << present->x << "," << present->y << endl;
 	for (int i = 0; i < 4; i++)
 	{
 		nb[i].G = present->G + 10;
 		nb[i].H = abs(dest.x - nb[i].x ) + abs(dest.y - nb[i].y);
     nb[i].F = nb[i].G + nb[i].H;
     nb[i].father = present;
+    // cout << nb[i].father->x << "," << nb[i].father->y << endl;
     //it is not a obstruction
 		if (map_obs[nb[i].x][nb[i].y] != 1){
 			// it is not in closelist
@@ -298,7 +299,8 @@ void drawPath(){
   cout << "initial\n";
 	// openlist.clear();
 	// closelist.clear(); 
-
+  	_path = new nav_msgs::Path();
+    (*_path).header.frame_id="odom";
   cout << "clear\n";
 
 	openlist.push_back(&start);
@@ -315,33 +317,55 @@ void drawPath(){
 	}
 
   cout << "find the dest\n";
-	present = &dest;	
+	
+	present = isInList(openlist, &dest);	
+	// cout << present->father->x << " , " <<  present->father->y << endl;
     geometry_msgs::PoseStamped this_pose_stamped;
     this_pose_stamped.header.frame_id="odom";
   cout << "2"<<endl;
   int count = 0;
   while (present != NULL){
-    cout << "num" << count << endl;
+    cout << "num " << count << endl;
     count++;
+    if(present == &start) break;
     present = present->father;
+
+    // cout << present->x << " , " <<  present->y << endl;
   }
-  _path->poses.resize(count+1);
 
-  cout << "count = "<<count<<endl;
+  cout << "finish???" << endl;
 
-  present = &dest;
+  cout << "count1 = " << count << endl;
+
+  // _path->poses.resize(count+1);
+
+  cout << "count2 = "<<count<<endl;
+
+  present = isInList(openlist, &dest);
   int ct = 0;
 	while (present != NULL){		
     cout<<"3"<<endl;
 
-    _path->poses[ct].pose.position.x = float(present->x) /cof /10 + minx;
-    _path->poses[ct].pose.position.y = float(present->y) /cof /10 + miny;
-    _path->poses[ct].pose.position.z = 0;
-    _path->poses[ct].header.frame_id="odom"; 
-    ct++;
+    // _path->poses[ct].pose.position.x = float(present->x) /cof /10 + minx;
+    // _path->poses[ct].pose.position.y = float(present->y) /cof /10 + miny;
+    // _path->poses[ct].pose.position.z = 0;
+    // _path->poses[ct].header.frame_id="odom"; 
+    // ct++;
     // cout<<"4"<<endl;      
-    // _path->poses.push_back(this_pose_stamped);
-    cout << "point "<< present->x << ", " << present->y <<endl;
+    // // _path->poses.push_back(this_pose_stamped);
+    // cout << "point "<< present->x << ", " << present->y <<endl;
+	geometry_msgs::PoseStamped this_pose_stamped;
+	cout<<"4.1"<<endl;     
+	this_pose_stamped.pose.position.x = float(present->x) /cof /10 + minx;
+	cout<<"4.2"<<endl;     
+	this_pose_stamped.pose.position.y = float(present->y) /cof /10 + miny;
+	cout<<"4.3"<<endl;     
+	this_pose_stamped.pose.position.z = 0;
+	cout<<"4.4"<<endl;     
+	this_pose_stamped.header.frame_id = "odom";
+	cout<<"4.5"<<endl;     
+	(*_path).poses.push_back(this_pose_stamped);
+	cout<<"4.6"<<endl;     
     present = present->father;
 	}
   cout << "finish drawPath\n";
