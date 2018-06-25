@@ -22,6 +22,9 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 
+#define OFFSET_X 4.65
+#define OFFSET_Y 1.413
+
 using std::endl;
 using std::list;
 using std::cout;
@@ -170,18 +173,18 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 	occupancyGrid.info.height = height;
 	occupancyGrid.info.origin.position.x = cloud_projected->sensor_origin_.x() ;
 	occupancyGrid.info.origin.position.y = cloud_projected->sensor_origin_.y() ;
-	cout << "---------------------------------------\n";
-	cout << "---------------------------------------\n";
-	cout << "---------------------------------------\n";
-	cout << (float)(cloud_projected->sensor_origin_.x()) << endl;
-	cout << (float)(cloud_projected->sensor_origin_.y()) << endl;	
-	cout << "---------------------------------------\n";
-	cout << "---------------------------------------\n";
-	cout << "---------------------------------------\n";
-	cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
+	// cout << (float)(cloud_projected->sensor_origin_.x()) << endl;
+	// cout << (float)(cloud_projected->sensor_origin_.y()) << endl;	
+	// cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
 
-	// occupancyGrid.info.origin.position.x = 0;
-	// occupancyGrid.info.origin.position.y = 0;
+	// occupancyGrid.info.origin.position.x = -OFFSET_X;
+	// occupancyGrid.info.origin.position.y = -OFFSET_Y;
 	occupancyGrid.info.origin.position.z = 0;
 	occupancyGrid.info.origin.orientation.x = 0;
 	occupancyGrid.info.origin.orientation.y = 0; 
@@ -280,20 +283,26 @@ Point* getLeastPoint()
 }  
 
 void updateNeighbour(Point *present) {
-	Point nb[4];
+	Point nb[8];
 	nb[0].x = present->x + 1; nb[0].y = present->y;
 	nb[1].x = present->x - 1; nb[1].y = present->y;
 	nb[2].x = present->x;	  nb[2].y = present->y + 1;
 	nb[3].x = present->x;     nb[3].y = present->y - 1;
+	nb[4].x = present->x + 1; nb[4].y = present->y + 1;
+	nb[5].x = present->x - 1; nb[5].y = present->y - 1;
+	nb[6].x = present->x - 1; nb[6].y = present->y + 1;
+	nb[7].x = present->x + 1; nb[7].y = present->y - 1;
   	// cout << present->x << "," << present->y << endl;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		nb[i].G = present->G + 1;
+		if (i >= 4 )
+			nb[i].G += 0.4;
 		nb[i].H = abs(dest.x - nb[i].x ) + abs(dest.y - nb[i].y);
-    nb[i].F = nb[i].G + nb[i].H;
-    nb[i].father = present;
-    // cout << nb[i].father->x << "," << nb[i].father->y << endl;
-    //it is not a obstruction
+	    nb[i].F = nb[i].G + nb[i].H;
+	    nb[i].father = present;
+	    // cout << nb[i].father->x << "," << nb[i].father->y << endl;
+	    //it is not a obstruction
 		if (map_obs[nb[i].x][nb[i].y] != 1){
 			// it is not in closelist
 			if (isInList(closelist, &nb[i]) == NULL){		
@@ -317,11 +326,11 @@ void updateNeighbour(Point *present) {
 void drawPath(){
 /**A****/
 	cout << "begin drawPath \n";
-	start.x = (int)((_initpose->pose.pose.position.x - minx)*cof*10);
-	start.y = (int)((_initpose->pose.pose.position.y - miny)*cof*10);
+	start.x = (int)((_initpose->pose.pose.position.x - minx - OFFSET_X)*cof*10);
+	start.y = (int)((_initpose->pose.pose.position.y - miny - OFFSET_Y)*cof*10);
 
-	dest.x = (int)((_goalpose->pose.position.x - minx)*cof*10);
-	dest.y = (int)((_goalpose->pose.position.y - miny)*cof*10);
+	dest.x = (int)((_goalpose->pose.position.x - minx - OFFSET_X)*cof*10);
+	dest.y = (int)((_goalpose->pose.position.y - miny - OFFSET_Y)*cof*10);
 
 	start.G = 0;
 	start.F = start.H =  abs(dest.x - start.x ) + abs(dest.y - start.y);
@@ -387,9 +396,9 @@ void drawPath(){
 	    // cout << "point "<< present->x << ", " << present->y <<endl;
 		geometry_msgs::PoseStamped this_pose_stamped;
 		cout<<"4.1"<<endl;     
-		this_pose_stamped.pose.position.x = float(present->x) /cof /10 + minx;
+		this_pose_stamped.pose.position.x = float(present->x) /cof /10 + minx + OFFSET_X;
 		cout<<"4.2"<<endl;     
-		this_pose_stamped.pose.position.y = float(present->y) /cof /10 + miny;
+		this_pose_stamped.pose.position.y = float(present->y) /cof /10 + miny + OFFSET_Y;
 		cout<<"4.3"<<endl;     
 		this_pose_stamped.pose.position.z = 0;
 		cout<<"4.4"<<endl;     
