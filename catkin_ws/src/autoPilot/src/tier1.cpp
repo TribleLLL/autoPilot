@@ -214,19 +214,12 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
 	          	if (istestObs == false){
           			geometry_msgs::PoseStamped this_pose_stamped;
-					cout<<"5.1"<<endl;     
 					this_pose_stamped.pose.position.x = float(x) /cof /10 + minx;
-					cout<<"5.2"<<endl;     
 					this_pose_stamped.pose.position.y = float(y) /cof /10 + miny;
-					cout<<"5.3"<<endl;     
 					this_pose_stamped.pose.position.z = 0;
-					cout<<"5.4"<<endl;     
 					this_pose_stamped.header.frame_id = "odom";
-					cout<<"5.5"<<endl;     
 					(*_testObs).poses.push_back(this_pose_stamped);
-					cout<<"5.6"<<endl;  
-	          	}
-	             
+	          	}	             
 	        }
 		  	else
 		    	occupancyGrid.data[index++] = 0;
@@ -383,6 +376,7 @@ void drawPath(){
 
 	present = isInList(openlist, &dest);
 	int ct = 0;
+	(*_path).poses.clear();
 	while (present != NULL){		
 	    cout<<"3"<<endl;
 
